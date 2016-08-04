@@ -81,8 +81,12 @@
 
     // given an array, check for conflicts
     hasConflict: function(arr) {
-      if (arr.filter((num) => num === 1).length > 1) {
-        return true;
+      var sum = 0;
+      for (var i = 0; i < arr.length; i++) {
+        sum += arr[i];
+        if (sum > 1) {
+          return true;
+        }
       }
       return false;
     },
@@ -116,8 +120,16 @@
     },
     // check conflicts for column
     hasColConflictAt: function(colIndex) {
-      var col = this.getCol(colIndex);
-      return this.hasConflict(col); // fixme
+      var n = this.get('n');
+      var rows = this._currentAttributes;
+      var sum = 0;
+      for (var i = 0; i < n; i++) {
+        sum += rows[i][colIndex];
+        if (sum > 1) {
+          return true;
+        }
+      }
+      return false; // fixme
     },
 
     // test if any columns on this board contain conflicts
@@ -138,26 +150,40 @@
     //
     // test if a specific major diagonal on this board contains a conflict
     hasMajorDiagonalConflictAt: function(rowIndex, colIndex) {
-      var rows = this.rows();
       var n = this.get('n');
-      var major = [];
-      rows.slice(rowIndex).forEach(function (row, i) {
+      var sum = 0;
+      var sliced = [];
+      for (var i = rowIndex; i < n; i++) {
+        sliced.push(this._currentAttributes[i]);
+      }
+      // var rows = this.rows();
+      // var major = [];
+      // rows.slice(rowIndex).forEach(function (row, i) {
+      //   if (colIndex + i < n) {
+      //     major.push(row[colIndex + i]);
+      //   }
+      // });
+      //return this.hasConflict(major); // fixme
+      for (var i = 0; i < sliced.length; i++) {
         if (colIndex + i < n) {
-          major.push(row[colIndex + i]);
+          sum += sliced[i][colIndex + i];
+          if (sum > 1) {
+            return true;
+          }
         }
-      });
-      return this.hasConflict(major); // fixme
+      }
+      return false; // fixme
     },
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
       var n = this.get('n');
-      for (var i = n - 1; i > 0; i--) {
+      for (var i = n - 2; i > 0; i--) {
         if (this.hasMajorDiagonalConflictAt(0, i)) {
           return true;
         }
       }
-      for (var i = 0; i < n; i++) {
+      for (var i = 0; i < n - 1; i++) {
         if (this.hasMajorDiagonalConflictAt(i, 0)) {
           return true;
         }
@@ -172,30 +198,64 @@
     //
     // test if a specific minor diagonal on this board contains a conflict
     hasMinorDiagonalConflictAt: function(rowIndex, colIndex) {
-      var rows = this.rows();
-      var minor = [];
-      rows.slice(rowIndex).forEach(function (row, i) {
+      // var rows = this.rows();
+      // var minor = [];
+      // rows.slice(rowIndex).forEach(function (row, i) {
+      //   if (colIndex - i >= 0) {
+      //     minor.push(row[colIndex - i]);
+      //   }
+      // });
+      // return this.hasConflict(minor); // fixme
+      var n = this.get('n');
+      var sum = 0;
+      var sliced = [];
+      for (var i = rowIndex; i < n; i++) {
+        sliced.push(this._currentAttributes[i]);
+      }
+
+      for (var i = 0; i < sliced.length; i++) {
         if (colIndex - i >= 0) {
-          minor.push(row[colIndex - i]);
+          sum += sliced[i][colIndex - i];
+          if (sum > 1) {
+            return true;
+          }
         }
-      });
-      return this.hasConflict(minor); // fixme
+      }
+      return false; // fixme
     },
 
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function() {
       var n = this.get('n');
-      for (var i = 0; i < n; i++) {
+      for (var i = 1; i < n; i++) {
         if (this.hasMinorDiagonalConflictAt(0, i)) {
           return true;
         }
       }
-      for (var i = 1; i < n; i++) {
+      for (var i = 1; i < n - 1; i++) {
         if (this.hasMinorDiagonalConflictAt(i, n - 1)) {
           return true;
         }
       }
       return false; // fixme
+    },
+    checkCurrentRook: function (row, col) {
+      var n = this.get('n');
+      var sum = 0;
+      for ( var i = 0; i < n; i++ ) {
+        sum += this._currentAttributes[row][i];
+        if (sum > 0) {
+          return true;
+        }
+      }
+      sum = 0;
+      for ( var j = 0; j < n; j++ ) {
+        sum += this._currentAttributes[j][col];
+        if (sum > 0) {
+          return true;
+        }
+      }
+      return false;
     }
 
     /*--------------------  End of Helper Functions  ---------------------*/
