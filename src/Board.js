@@ -34,7 +34,7 @@
     },
 
     hasAnyRooksConflicts: function() {
-      return this.hasAnyRowConflicts();
+      return this.hasAnyRowConflicts() || this.hasAnyColConflicts();
     },
 
     hasAnyQueenConflictsOn: function(rowIndex, colIndex) {
@@ -46,7 +46,7 @@
       );
     },
 
-    hasAnyQueensConflicts: function(rowIndex) {
+    hasAnyQueensConflicts: function() {
       return this.hasAnyRooksConflicts() || this.hasAnyMajorDiagonalConflicts() || this.hasAnyMinorDiagonalConflicts();
     },
 
@@ -237,7 +237,7 @@
     checkCurrentRook: function (row, col) {
       var n = this.get('n');
       var sum = 0;
-      for ( var i = 0; i < n; i++ ) {
+      for ( var i = 0; i < col; i++ ) {
         sum += this._currentAttributes[row][i];
         if (sum > 0) {
           return true;
@@ -250,6 +250,38 @@
       //     return true;
       //   }
       // }
+      return false;
+    },
+    checkCurrentQueen: function (row, col) {
+      var n = this.get('n');
+      var sum = 0;
+      for ( var i = 0; i < n; i++ ) {
+        sum += this._currentAttributes[row][i];
+        if (sum > 0) {
+          return true;
+        }
+      }
+      var x = col - 1;
+      var y = row - 1;
+      while (x >= 0 && y >= 0) {
+        sum += this._currentAttributes[y][x];
+        x--;
+        y--;
+        if (sum > 0) {
+          return true;
+        }
+      }
+      x = col - 1;
+      y = row + 1;
+      while (x >= 0 && y < n) {
+        sum += this._currentAttributes[y][x];
+        x--;
+        y++;
+        if (sum > 0) {
+          return true;
+        }
+      }
+      
       return false;
     }
 

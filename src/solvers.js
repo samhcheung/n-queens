@@ -98,14 +98,13 @@ window.findNQueensSolution = function(n) {
       return; 
     }
     
-    solution.togglePiece(row, col);
     // if conflicts
-    if (solution.hasAnyQueensConflicts(row)) {
-      solution.togglePiece(row, col);
+    if (solution.checkCurrentQueen(row, col)) {
       if (row + 1 < n) {
         rookPlacer(row + 1, col, rooksLeft);
       }
     } else {
+      solution.togglePiece(row, col);
       rookPlacer(0, col + 1, rooksLeft - 1);
       solution.togglePiece(row, col);
 
@@ -120,7 +119,7 @@ window.findNQueensSolution = function(n) {
   } else {
     rookPlacer(0, 0, n);
   }
-  console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
+  //console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
   return aSolution;
 };
 
