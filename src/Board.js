@@ -1,7 +1,3 @@
-// This file is a Backbone Model (don't worry about what that means)
-// It's part of the Board Visualizer
-// The only portions you need to work on are the helper functions (below)
-
 (function() {
 
   window.Board = Backbone.Model.extend({
@@ -38,7 +34,7 @@
     },
 
     hasAnyRooksConflicts: function() {
-      return this.hasAnyRowConflicts() || this.hasAnyColConflicts();
+      return this.hasAnyRowConflicts();
     },
 
     hasAnyQueenConflictsOn: function(rowIndex, colIndex) {
@@ -50,7 +46,7 @@
       );
     },
 
-    hasAnyQueensConflicts: function() {
+    hasAnyQueensConflicts: function(rowIndex) {
       return this.hasAnyRooksConflicts() || this.hasAnyMajorDiagonalConflicts() || this.hasAnyMinorDiagonalConflicts();
     },
 
@@ -68,7 +64,6 @@
     / __| __/ _` | '__| __| | '_ \ / _ \ '__/ _ (_)
     \__ \ || (_| | |  | |_  | | | |  __/ | |  __/_
     |___/\__\__,_|_|   \__| |_| |_|\___|_|  \___(_)
-
  */
     /*=========================================================================
     =                 TODO: fill in these Helper Functions                    =
@@ -248,13 +243,13 @@
           return true;
         }
       }
-      sum = 0;
-      for ( var j = 0; j < n; j++ ) {
-        sum += this._currentAttributes[j][col];
-        if (sum > 0) {
-          return true;
-        }
-      }
+      // sum = 0;
+      // for ( var j = 0; j < n; j++ ) {
+      //   sum += this._currentAttributes[j][col];
+      //   if (sum > 0) {
+      //     return true;
+      //   }
+      // }
       return false;
     }
 

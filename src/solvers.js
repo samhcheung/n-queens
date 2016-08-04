@@ -30,39 +30,59 @@ window.findNRooksSolution = function(n) {
 
   };
   rookPlacer(0, 0, n);
-  console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
+  //console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
   return solution.rows();
 };
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
-  var solution = new Board({n: n}); //fixme
-  var solutionCount = 0;
-  var rookPlacer = (row, col, rooksLeft) => {
-    // if solution found
-    if (rooksLeft === 0) { 
-      solutionCount++;
-      return; 
-    }
+  // var solution = new Board({n: n}); //fixme
+  // var solutionCount = 0;
+  // var rookPlacer = (row, col, rooksLeft) => {
+  //   // if solution found
+  //   if (rooksLeft === 0) { 
+  //     solutionCount++;
+  //     return; 
+  //   }
     
-    // if conflicts
-    if (solution.checkCurrentRook(row, col)) {
-      if (row + 1 < n) {
-        rookPlacer(row + 1, col, rooksLeft);
-      }
-    } else {
-      solution.togglePiece(row, col);
-      rookPlacer(0, col + 1, rooksLeft - 1);
-      solution.togglePiece(row, col);
+  //   // if conflicts
+  //   if (solution.checkCurrentRook(row, col)) {
+  //     if (row + 1 < n) {
+  //       rookPlacer(row + 1, col, rooksLeft);
+  //     }
+  //   } else {
+  //     solution.togglePiece(row, col);
+  //     rookPlacer(0, col + 1, rooksLeft - 1);
+  //     solution.togglePiece(row, col);
 
-      if (row + 1 < n) {
-        rookPlacer(row + 1, col, rooksLeft);
-      }
+  //     if (row + 1 < n) {
+  //       rookPlacer(row + 1, col, rooksLeft);
+  //     }
+  //   }
+
+  // };
+  // rookPlacer(0, 0, n);
+  // console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
+  // return solutionCount;
+  var count = 0;
+  var all = Math.pow(2, n) - 1;
+
+  var findSolution = function(col) {
+    if ( col === all ) {
+      count++;
+      return;
     }
-
+    var poss = ~(col) & all;
+    while (poss) {
+      var bit = poss & -poss;
+      poss -= bit;
+      findSolution ( col | bit );
+    }
   };
-  rookPlacer(0, 0, n);
-  console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
-  return solutionCount;
+
+  findSolution(0, 0, 0);
+  return count;
+
+
 };
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
@@ -80,7 +100,7 @@ window.findNQueensSolution = function(n) {
     
     solution.togglePiece(row, col);
     // if conflicts
-    if (solution.hasAnyQueensConflicts()) {
+    if (solution.hasAnyQueensConflicts(row)) {
       solution.togglePiece(row, col);
       if (row + 1 < n) {
         rookPlacer(row + 1, col, rooksLeft);
@@ -106,33 +126,52 @@ window.findNQueensSolution = function(n) {
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  var solution = new Board({n: n}); //fixme
-  var solutionCount = 0;
-  var rookPlacer = (row, col, rooksLeft) => {
-    // if solution found
-    if (rooksLeft === 0) { 
-      solutionCount++;
-      return; 
-    }
+  // var solution = new Board({n: n}); //fixme
+  // var solutionCount = 0;
+  // var rookPlacer = (row, col, rooksLeft) => {
+  //   // if solution found
+  //   if (rooksLeft === 0) { 
+  //     solutionCount++;
+  //     return; 
+  //   }
     
-    solution.togglePiece(row, col);
-    // if conflicts
-    if (solution.hasAnyQueensConflicts()) {
-      solution.togglePiece(row, col);
-      if (row + 1 < n) {
-        rookPlacer(row + 1, col, rooksLeft);
-      }
-    } else {
-      rookPlacer(0, col + 1, rooksLeft - 1);
-      solution.togglePiece(row, col);
+  //   solution.togglePiece(row, col);
+  //   // if conflicts
+  //   if (solution.hasAnyQueensConflicts()) {
+  //     solution.togglePiece(row, col);
+  //     if (row + 1 < n) {
+  //       rookPlacer(row + 1, col, rooksLeft);
+  //     }
+  //   } else {
+  //     rookPlacer(0, col + 1, rooksLeft - 1);
+  //     solution.togglePiece(row, col);
 
-      if (row + 1 < n) {
-        rookPlacer(row + 1, col, rooksLeft);
-      }
+  //     if (row + 1 < n) {
+  //       rookPlacer(row + 1, col, rooksLeft);
+  //     }
+  //   }
+
+  // };
+  // rookPlacer(0, 0, n);
+  // console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
+  // return solutionCount;
+  var count = 0;
+  var all = Math.pow(2, n) - 1;
+
+  var findSolution = function(ld, col, rd) {
+    if ( col === all ) {
+      count++;
+      return;
     }
-
+    var poss = ~(ld | col | rd) & all;
+    while (poss) {
+      var bit = poss & -poss;
+      poss -= bit;
+      findSolution ( (ld | bit) << 1, col | bit, (rd | bit) >> 1 );
+    }
   };
-  rookPlacer(0, 0, n);
-  console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
-  return solutionCount;
+
+  findSolution(0, 0, 0);
+  return count;
+
 };
